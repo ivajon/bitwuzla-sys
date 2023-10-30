@@ -30,7 +30,7 @@ bitwuzla-sys = { version = "0.2", features = ["vendor-cadical"] }
 ```
 
 Enabling `vendor-cadical` will automatically build a static `bitwuzla` library
-and link against it.  Currently this uses the CaDiCaL SAT solver.
+and link against it.  Currently, this uses the CaDiCaL SAT solver.
 
 In order for the build to succeed, you'll need to install some tools on your
 build host; for a Debian-based distribution `build-essential`, `cmake`, `curl`,

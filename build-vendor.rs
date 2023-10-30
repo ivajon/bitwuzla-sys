@@ -22,59 +22,46 @@ impl BitwuzlaBuild {
             copy_dir(&self.src_dir, &self.out_dir).expect("failed to copy Bitwuzla sources to `OUT_DIR`");
         }
 
-        if !self.out_dir.join("deps/install/lib/libcadical.a").exists() {
+        if !self.out_dir.join("build").exists() {
             self.run_command(
-                "Download and build CaDiCaL",
+                "Setup Bitwuzla meson project",
                 Command::new("/usr/bin/env")
-                    .arg("bash")
-                    .arg(self.out_dir.join("contrib/setup-cadical.sh"))
+                    .arg("meson")
+                    .arg("setup")
+                    .arg("build/")
+                    .arg("-Dbuildtype=release")
+                    .arg("-Ddefault_library=static")
                     .current_dir(&self.out_dir),
             );
         }
-
-        if !self.out_dir.join("deps/install/lib/libbtor2parser.a").exists() {
-            self.run_command(
-                "Download and build BTOR2Tools",
-                Command::new("/usr/bin/env")
-                    .arg("bash")
-                    .arg(self.out_dir.join("contrib/setup-btor2tools.sh"))
-                    .current_dir(&self.out_dir),
-            );
-        }
-
-        if !self.out_dir.join("deps/symfpu").exists() {
-            self.run_command(
-                "Download and build SymFPU",
-                Command::new("/usr/bin/env")
-                    .arg("bash")
-                    .arg(self.out_dir.join("contrib/setup-symfpu.sh"))
-                    .current_dir(&self.out_dir),
-            );
-        }
-
-        println!("cargo:rustc-link-search=native={}", self.out_dir.join("deps/install/lib").display());
-        println!("cargo:rustc-link-lib=static=cadical");
-        println!("cargo:rustc-link-lib=static=btor2parser");
 
         self
     }
 
     pub fn build(self) -> Self {
-        self.run_command(
-            "Configure Bitwuzla",
-            Command::new("/bin/sh")
-                .arg(self.out_dir.join("configure.sh"))
-                .current_dir(&self.out_dir),
-        );
+        // self.run_command(
+        //     "Configure Bitwuzla",
+        //     Command::new("meson")
+        //         .arg("setup")
+        //         .arg("build/")
+        //         .arg("-Dbuildtype=release")
+        //         .current_dir(&self.out_dir),
+        // );
 
         self.run_command(
             "Build Bitwuzla",
-            Command::new("make")
-                .arg("-j")
+            Command::new("ninja")
                 .current_dir(self.out_dir.join("build")),
         );
 
-        println!("cargo:rustc-link-search=native={}", self.out_dir.join("build/lib").display());
+        // TODO: why are these not included in libbitwuzla.a?
+        println!("cargo:rustc-link-search={}", self.out_dir.join("build/src/lib").display());
+        println!("cargo:rustc-link-lib=static=bitwuzlabb");
+        println!("cargo:rustc-link-lib=static=bitwuzlabv");
+        println!("cargo:rustc-link-lib=static=bitwuzlals");
+        println!("cargo:rustc-link-lib=static=bzlarng");
+
+        println!("cargo:rustc-link-search={}", self.out_dir.join("build/src").display());
         println!("cargo:rustc-link-lib=static=bitwuzla");
         println!("cargo:rustc-link-lib=stdc++");
         println!("cargo:rustc-link-lib=gmp");
