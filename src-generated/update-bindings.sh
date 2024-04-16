@@ -3,7 +3,7 @@
 bindgen \
     --output bindings.rs \
     --allowlist-function '^bitwuzla_(.*)$' \
-    --allowlist-type '^Bitwuzla(.*)$' \
+    --allowlist-type '^[Bb]itwuzla(.*)$' \
     --no-recursive-allowlist \
     --no-doc-comments \
     --raw-line 'use libc::FILE;' \
