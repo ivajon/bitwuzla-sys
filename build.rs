@@ -13,13 +13,32 @@ impl BitwuzlaBuild {
     pub fn new() -> Self {
         Self {
             src_dir: Path::new(env!("CARGO_MANIFEST_DIR")).join("bitwuzla"),
-            out_dir: Path::new(&env::var_os("OUT_DIR").expect("`OUT_DIR` not set")).join("vendor-build"),
+            out_dir: Path::new(&env::var_os("OUT_DIR").expect("`OUT_DIR` not set"))
+                .join("vendor-build"),
         }
     }
 
-    pub fn prerequisites(self) -> Self {
+    pub fn prerequisites(mut self) -> Self {
+        println!("source dir: {}", self.src_dir.display());
+        println!("Build dir: {}", self.out_dir.display());
         if !self.out_dir.exists() {
-            copy_dir(&self.src_dir, &self.out_dir).expect("failed to copy Bitwuzla sources to `OUT_DIR`");
+            self.run_command(
+                "Mkdir for vendor data",
+                Command::new("mkdir").arg(self.out_dir.clone()),
+            );
+        }
+
+        self.out_dir = self.out_dir.join("source");
+        if !self.out_dir.exists() {
+            self.run_command(
+                "create symlink",
+                Command::new("ln")
+                    .arg("-s")
+                    .arg(self.src_dir.clone())
+                    .arg(self.out_dir.clone()),
+            );
+            //copy_dir(&self.src_dir, &self.out_dir)
+            //    .expect("failed to copy Bitwuzla sources to `OUT_DIR`");
         }
 
         if !self.out_dir.join("build").exists() {
@@ -50,18 +69,23 @@ impl BitwuzlaBuild {
 
         self.run_command(
             "Build Bitwuzla",
-            Command::new("ninja")
-                .current_dir(self.out_dir.join("build")),
+            Command::new("ninja").current_dir(self.out_dir.join("build")),
         );
 
         // TODO: why are these not included in libbitwuzla.a?
-        println!("cargo:rustc-link-search={}", self.out_dir.join("build/src/lib").display());
+        println!(
+            "cargo:rustc-link-search={}",
+            self.out_dir.join("build/src/lib").display()
+        );
         println!("cargo:rustc-link-lib=static=bitwuzlabb");
         println!("cargo:rustc-link-lib=static=bitwuzlabv");
         println!("cargo:rustc-link-lib=static=bitwuzlals");
         println!("cargo:rustc-link-lib=static=bzlarng");
 
-        println!("cargo:rustc-link-search={}", self.out_dir.join("build/src").display());
+        println!(
+            "cargo:rustc-link-search={}",
+            self.out_dir.join("build/src").display()
+        );
         println!("cargo:rustc-link-lib=static=bitwuzla");
         println!("cargo:rustc-link-lib=stdc++");
         // println!("cargo:rustc-link-lib=gmp");
@@ -78,20 +102,16 @@ impl BitwuzlaBuild {
         if !status.success() {
             panic!(
                 "*** ERROR in action `{}`, exit status {}\n*** Command: {:?}",
-                description,
-                status,
-                command,
+                description, status, command,
             );
         }
     }
 }
 
-
-
 fn main() {
     if std::env::var("BITWUZLA_NO_VENDOR").map_or(true, |value| value == "0") {
         BitwuzlaBuild::new().prerequisites().build();
     } else {
-        println!("cargo:rustc-link-lib=bitwuzla");
+        println!("cargo:rustc-link-lib=static=bitwuzla");
     }
 }
