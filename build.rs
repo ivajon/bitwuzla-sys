@@ -2,8 +2,6 @@ use std::env;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use copy_dir::copy_dir;
-
 pub struct BitwuzlaBuild {
     src_dir: PathBuf,
     out_dir: PathBuf,
@@ -47,9 +45,12 @@ impl BitwuzlaBuild {
                 Command::new("/usr/bin/env")
                     .arg("meson")
                     .arg("setup")
-                    .arg("build/")
+                    .arg("build")
                     .arg("-Dbuildtype=release")
+                    .arg("-Dkissat=true")
+                    //.arg("-Dcadical=true")
                     .arg("-Ddefault_library=static")
+                    .arg("--prefer-static")
                     .current_dir(&self.out_dir),
             );
         }
