@@ -82,6 +82,7 @@ impl BitwuzlaBuild {
         println!("cargo:rustc-link-lib=static=bitwuzlabv");
         println!("cargo:rustc-link-lib=static=bitwuzlals");
         println!("cargo:rustc-link-lib=static=bzlarng");
+        // println!("cargo:rustc-link-lib=static=cadical");
 
         println!(
             "cargo:rustc-link-search={}",

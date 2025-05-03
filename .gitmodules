@@ -1,3 +1,4 @@
 [submodule "bitwuzla"]
 	path = bitwuzla
-	url = https://github.com/bitwuzla/bitwuzla
+	url = https://github.com/ivajon/bitwuzla
+	branch = fixes
