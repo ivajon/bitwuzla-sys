@@ -48,9 +48,24 @@ impl BitwuzlaBuild {
                     .arg("build")
                     .arg("-Dbuildtype=release")
                     .arg("-Dkissat=true")
-                    //.arg("-Dcadical=true")
+                    // .arg("-Dcadical=true")
                     .arg("-Ddefault_library=static")
                     .arg("--prefer-static")
+                    .current_dir(&self.out_dir),
+            );
+        } else {
+            self.run_command(
+                "Reconfigure Bitwuzla meson project",
+                Command::new("/usr/bin/env")
+                    .arg("meson")
+                    .arg("setup")
+                    .arg("build")
+                    .arg("-Dbuildtype=release")
+                    .arg("-Dkissat=true")
+                    // .arg("-Dcadical=true")
+                    .arg("-Ddefault_library=static")
+                    .arg("--prefer-static")
+                    .arg("--reconfigure")
                     .current_dir(&self.out_dir),
             );
         }
@@ -59,14 +74,14 @@ impl BitwuzlaBuild {
     }
 
     pub fn build(self) -> Self {
-        self.run_command(
-            "Configure Bitwuzla",
-            Command::new("meson")
-                .arg("setup")
-                .arg("build/")
-                .arg("-Dbuildtype=release")
-                .current_dir(&self.out_dir),
-        );
+        // self.run_command(
+        //     "Configure Bitwuzla",
+        //     Command::new("meson")
+        //         .arg("setup")
+        //         .arg("build/")
+        //         .arg("-Dbuildtype=release")
+        //         .current_dir(&self.out_dir),
+        // );
 
         self.run_command(
             "Build Bitwuzla",
