@@ -59,14 +59,14 @@ impl BitwuzlaBuild {
     }
 
     pub fn build(self) -> Self {
-        // self.run_command(
-        //     "Configure Bitwuzla",
-        //     Command::new("meson")
-        //         .arg("setup")
-        //         .arg("build/")
-        //         .arg("-Dbuildtype=release")
-        //         .current_dir(&self.out_dir),
-        // );
+        self.run_command(
+            "Configure Bitwuzla",
+            Command::new("meson")
+                .arg("setup")
+                .arg("build/")
+                .arg("-Dbuildtype=release")
+                .current_dir(&self.out_dir),
+        );
 
         self.run_command(
             "Build Bitwuzla",
