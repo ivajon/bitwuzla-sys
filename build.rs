@@ -28,10 +28,10 @@ impl BitwuzlaBuild {
 
         self.out_dir = self.out_dir.join("source");
         if !self.out_dir.exists() {
-            self.run_command(
+            self.optionally_run_command(
                 "create symlink",
-                Command::new("ln")
-                    .arg("-s")
+                Command::new("cp")
+                    .arg("-r")
                     .arg(self.src_dir.clone())
                     .arg(self.out_dir.clone()),
             );
@@ -109,6 +109,21 @@ impl BitwuzlaBuild {
         println!("cargo:rustc-link-lib=static=gmp");
 
         self
+    }
+
+    fn optionally_run_command(&self, description: &str, command: &mut Command) {
+        println!("*** {}", description);
+
+        let status = command.status();
+
+        if let Ok(status) = status {
+            if !status.success() {
+                println!(
+                    "*** ERROR in action `{}`, exit status {}\n*** Command: {:?}",
+                    description, status, command,
+                );
+            }
+        }
     }
 
     fn run_command(&self, description: &str, command: &mut Command) {
