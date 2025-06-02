@@ -25,19 +25,22 @@ impl BitwuzlaBuild {
                 Command::new("mkdir").arg(self.out_dir.clone()),
             );
         }
+        self.run_command(
+            "Initiate bitwuzla",
+            Command::new("git").arg("submodule").arg("update"),
+        );
 
         self.out_dir = self.out_dir.join("source");
-        if !self.out_dir.exists() {
-            self.optionally_run_command(
-                "create symlink",
-                Command::new("cp")
-                    .arg("-r")
-                    .arg(self.src_dir.clone())
-                    .arg(self.out_dir.clone()),
-            );
-            //copy_dir(&self.src_dir, &self.out_dir)
-            //    .expect("failed to copy Bitwuzla sources to `OUT_DIR`");
-        }
+        self.optionally_run_command(
+            "create symlink",
+            Command::new("cp")
+                .arg("-r")
+                .arg(self.src_dir.clone())
+                .arg(self.out_dir.clone()),
+        );
+        // self.out_dir.push("bitwuzla");
+        //copy_dir(&self.src_dir, &self.out_dir)
+        //    .expect("failed to copy Bitwuzla sources to `OUT_DIR`");
 
         if !self.out_dir.join("build").exists() {
             self.run_command(
@@ -48,6 +51,7 @@ impl BitwuzlaBuild {
                     .arg("build")
                     .arg("-Dbuildtype=release")
                     .arg("-Dkissat=true")
+                    .arg("-Dtesting=disabled")
                     // .arg("-Dcadical=true")
                     .arg("-Ddefault_library=static")
                     .arg("--prefer-static")
@@ -62,6 +66,7 @@ impl BitwuzlaBuild {
                     .arg("build")
                     .arg("-Dbuildtype=release")
                     .arg("-Dkissat=true")
+                    .arg("-Dtesting=false")
                     // .arg("-Dcadical=true")
                     .arg("-Ddefault_library=static")
                     .arg("--prefer-static")
