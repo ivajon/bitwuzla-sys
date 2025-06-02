@@ -66,7 +66,7 @@ impl BitwuzlaBuild {
                     .arg("build")
                     .arg("-Dbuildtype=release")
                     .arg("-Dkissat=true")
-                    .arg("-Dtesting=false")
+                    .arg("-Dtesting=disabled")
                     // .arg("-Dcadical=true")
                     .arg("-Ddefault_library=static")
                     .arg("--prefer-static")
