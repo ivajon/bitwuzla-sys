@@ -109,9 +109,12 @@ impl BitwuzlaBuild {
             self.out_dir.join("build/src").display()
         );
         println!("cargo:rustc-link-lib=static=bitwuzla");
-        println!("cargo:rustc-link-lib=stdc++");
-        // println!("cargo:rustc-link-lib=gmp");
-        println!("cargo:rustc-link-lib=static=gmp");
+        if std::env::consts::OS == "macos" {
+            println!("cargo:rustc-link-lib=libc++");
+        } else {
+            println!("cargo:rustc-link-lib=stdc++");
+        }
+        println!("cargo:rustc-link-lib=gmp");
 
         self
     }

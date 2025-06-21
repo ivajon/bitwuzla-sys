@@ -20,7 +20,6 @@ vendor-cadical = [] # no-op (default)
 
 [dependencies]
 libc                                    = "0.2.73"
-gmp-mpfr-sys = { version = "*", features = ["force-cross"] }
 
 [build-dependencies]
 copy_dir                                = { version = "0.1.2" }
