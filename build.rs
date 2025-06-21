@@ -55,6 +55,7 @@ impl BitwuzlaBuild {
                     // .arg("-Dcadical=true")
                     .arg("-Ddefault_library=static")
                     .arg("--prefer-static")
+                    .arg("--force-fallback-for=cadical")
                     .current_dir(&self.out_dir),
             );
         } else {
@@ -71,6 +72,7 @@ impl BitwuzlaBuild {
                     .arg("-Ddefault_library=static")
                     .arg("--prefer-static")
                     .arg("--reconfigure")
+                    .arg("--force-fallback-for=cadical")
                     .current_dir(&self.out_dir),
             );
         }
@@ -102,7 +104,7 @@ impl BitwuzlaBuild {
         println!("cargo:rustc-link-lib=static=bitwuzlabv");
         println!("cargo:rustc-link-lib=static=bitwuzlals");
         println!("cargo:rustc-link-lib=static=bzlarng");
-        // println!("cargo:rustc-link-lib=static=cadical");
+        println!("cargo:rustc-link-lib=cadical");
 
         println!(
             "cargo:rustc-link-search={}",
